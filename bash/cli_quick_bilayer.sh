@@ -103,7 +103,6 @@ fi
 API="https://charmm-gui.org"
 
 # Build curl args
-declare -a CURL_ARGS
 CURL_STR="";
 CURL_STR+="&margin=$MARGIN"
 CURL_STR+="&wdist=$WDIST"
