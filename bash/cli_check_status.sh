@@ -33,7 +33,7 @@ if [[ "$1" == "--help" || "$1" == "-h" ]]; then
 fi
 
 # main
-API="https://charmm-gui.org"
+API="https://www.charmm-gui.org/api"
 
 if [ ! -f session.token ]; then
   echo "Please login first."
@@ -48,7 +48,7 @@ if [ "$#" -eq 0 ]; then
   exit 1
 fi
 
-RESPONSE=$(curl -s -X GET "$API/?doc=jwt_check_status&jobid=$JOBID" \
+RESPONSE=$(curl -s -X GET "$API/check_status?jobid=$JOBID" \
     -H "Authorization: Bearer $TOKEN")
 
 if [ -z "$RESPONSE" ]; then
@@ -58,7 +58,10 @@ fi
 
 # Extract fields
 
+echo "$RESPONSE"
+RANK=$(echo "$RESPONSE" | jq -r '.rank')
 STATUS=$(echo "$RESPONSE" | jq -r '.status')
+RQINFO=$(echo "$RESPONSE" | jq -r '.rqinfo')
 HAS_TAR_FILE=$(echo "$RESPONSE" | jq -r '.hasTarFile')
 LAST_OUT_FILE=$(echo "$RESPONSE" | jq -r '.lastOutFile')
 LAST_OUT_TIME=$(echo "$RESPONSE" | jq -r '.lastOutTime')
@@ -66,11 +69,16 @@ LAST_OUT_TIME=$(echo "$RESPONSE" | jq -r '.lastOutTime')
 # Pretty print
 echo "======================================"
 echo " Job ID          : $JOBID"
+echo " Job Rank        : $RANK"
 echo " Job Status      : $STATUS"
 echo " Has Tar Archive : $HAS_TAR_FILE"
 echo " Last Output File: $LAST_OUT_FILE"
 echo " Last Modified   : $LAST_OUT_TIME"
 echo "======================================"
+echo "RQ Queue Status"
+echo "--------------------------------------"
+echo " Queue info      : $RQINFO"
+echo "--------------------------------------"
 echo " Last 30 Lines:"
 echo "--------------------------------------"
 echo "$RESPONSE" | jq -r '.lastOutLine'

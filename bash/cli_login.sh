@@ -37,13 +37,13 @@ if [[ "$1" == "--help" || "$1" == "-h" ]]; then
 fi
 
 # main
-API="https://charmm-gui.org"
+API="https://www.charmm-gui.org/api"
 
 read -p "Email: " USERNAME
 read -sp "Password: " PASSWORD
 echo ""
 
-RESPONSE=$(curl -s -X POST "$API/?doc=jwt_login" \
+RESPONSE=$(curl -s -X POST "$API/login" \
   -H "Content-Type: application/json" \
   -d "{\"email\": \"$USERNAME\", \"password\": \"$PASSWORD\"}")
 # Check for jq

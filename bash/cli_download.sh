@@ -27,7 +27,8 @@ if [[ "$1" == "--help" || "$1" == "-h" ]]; then
 fi
 
 # main
-API="https://charmm-gui.org"
+#API="https://charmm-gui.org"
+API="https://www.charmm-gui.org/api"
 
 if [ ! -f session.token ]; then
   echo "Please login first."
@@ -47,7 +48,7 @@ OUTFILE="charmm-gui-$JOBID.tgz"
 # Perform request
 curl -s -H "Authorization: Bearer $TOKEN" \
   -o "$OUTFILE" \
-  "$API/?doc=jwt_download&jobid=$JOBID"
+  "$API/download?jobid=$JOBID"
 
 # Check if file is JSON (error) or tar archive
 FILETYPE=$(file --mime-type -b "$OUTFILE")
@@ -57,5 +58,6 @@ if [[ "$FILETYPE" == "application/x-gzip" || "$FILETYPE" == "application/gzip" |
 else
   echo "No output file available for job $JOBID."
   echo "Server response:"
+  echo $OUTFILE
   rm -f "$OUTFILE"
 fi
