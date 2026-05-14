@@ -27,8 +27,7 @@ if [[ "$1" == "--help" || "$1" == "-h" ]]; then
 fi
 
 # main
-#API="https://charmm-gui.org"
-API="https://www.charmm-gui.org/api"
+API="https://charmm-gui.org/api"
 
 if [ ! -f session.token ]; then
   echo "Please login first."
@@ -57,7 +56,7 @@ if [[ "$FILETYPE" == "application/x-gzip" || "$FILETYPE" == "application/gzip" |
   echo "Download successful: $OUTFILE"
 else
   echo "No output file available for job $JOBID."
-  echo "Server response:"
-  echo $OUTFILE
+  echo "Server response: $(cat $OUTFILE)"
+  echo "remove $OUTFILE"
   rm -f "$OUTFILE"
 fi
