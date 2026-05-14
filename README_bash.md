@@ -7,37 +7,48 @@ These scripts are ideal for lightweight workflows, shell pipelines, automated jo
 
 # Available Scripts
 
-### 1. `login.sh`
+### 1. `cli_login.sh`
 Authenticate and retrieve a JWT token.
 
 ```bash
-./login.sh --email my@email.com
+./cli_login.sh
 ```
 
-- Password is hidden
-- Token is printed and saved locally if desired
-- Can be used in automation pipelines
+- Prompts for the user email account
+- Prompts for the password with hidden input
+- Saves the token to `session.token`
 
-### 2. `status.sh`
+### 2. `cli_check_status.sh`
 
 ```bash
-./status.sh --jobid 6539798673
+./cli_check_status.sh 6539798673
+./cli_check_status.sh
 ```
 
+- With a job ID, prints detailed status for that job
+- Without a job ID, prints the logged-in user's job table
 - Job status (submitted, running, done, error)
 - Redis Queue information (rqinfo)
 - Number of jobs ahead (rank)
 - Name of last output file
 - Last 30 lines of CHARMM-GUI log
 
-### 3. `quick_bilayer.sh`
-./quick_bilayer.sh \
+Usage:
+
+```bash
+./cli_check_status.sh [jobid]
+```
+
+### 3. `cli_quick_bilayer.sh`
+```bash
+./cli_quick_bilayer.sh \
     --jobid 1234567890 \
     --upper DOPC:POPC:CHL1=1:1:2 \
     --lower DOPC:POPC:CHL1=1:2:1 \
     --margin 20 \
     --run-ppm \
     --run-ffconverter
+```
 
 - protein systems
 - membrane-only jobs
@@ -71,17 +82,19 @@ Authenticate and retrieve a JWT token.
 | `wdist` | 22.5 | Z-length water boundary |
 | `Ion_conc` | 0.15 | Ion concentration (M) |
 | `Ion_type` | NaCl | Ion type |
-| `clone_job` | false | Copy existing job directory before execution |
-| `ppm` | false | Enable PPM alignment |
+| `--clone-job` | false | Copy the PDB Reader job folder before running Quick Bilayer. This is useful for generating multiple membrane environments with different lipid compositions because the original input `jobid` directory is not modified and can be reused. |
+| `--run-ffconverter` | false | Run FF-Converter to generate MD input files for other simulation programs such as NAMD, OpenMM, and GROMACS. This is generally essential when users need production-ready simulation inputs. |
+| `--run-ppm` | false | Submit the PDB file to the PPM server to determine a realistic protein orientation along the membrane Z-axis. This is essential when the protein orientation along the membrane axis has not already been determined. |
 | `prot_projection_upper` | false | Project protein atoms to upper leaflet |
 | `prot_projection_lower` | false | Project protein atoms to lower leaflet |
 
 ### Example: user-specified lipid composition strings 
 
 ```bash
-bash cli_quick_bilayer.sh --jobid 1234567890 \
+bash cli_quick_bilayer.sh --jobid 7873541478 \
   --upper POPC:CHL1=3:2 --lower POPC:CHL1=3:2 \
-  --margin 20.0 --ion_type KCl
+  --margin 20.0 --ion_type KCl \
+  --clone-job --run-ffconverter --run-ppm
 ```
 
 ### Example: preset membrane types
@@ -94,10 +107,10 @@ bash cli_quick_bilayer.sh --membrane_only \
 
 
 
-### 4. `download.sh`
+### 4. `cli_download.sh`
 
 ```bash
-./download.sh --jobid 6539798673 -o results.tgz
+./cli_download.sh [jobid]
 ```
 
 # Requirements
